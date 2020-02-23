@@ -9,7 +9,140 @@ import java.util.*;
 public class NumericSolution {
     @Test
     public void test1() {
-        nextPermutation(new int[]{1});
+        System.out.println(multiply("11", "10"));
+    }
+
+    public String multiply(String num1, String num2) {
+        if (num1.equals("0") || num2.equals("0")) return "0";
+        int[] res = new int[num1.length() + num2.length()];
+        for (int i = num1.length() - 1; i >= 0; i--) {
+            int n1 = num1.charAt(i) - '0';
+            for (int j = num2.length() - 1; j >= 0; j--) {
+                int n2 = num2.charAt(j) - '0';
+                int sum = n1 * n2 + res[i + j + 1];
+                res[i + j + 1] = sum % 10;
+                res[i + j] += sum / 10;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) {
+            if (i == 0 && res[i] == 0) continue;
+            sb.append(res[i]);
+        }
+        return sb.toString();
+    }
+
+    public int trap(int[] height) {
+        int len = height.length;
+        int[] left = new int[len];
+        int[] right = new int[len];
+        int max = 0;
+        for (int i = 0; i < len; i++) {
+            if (height[i] > max) {
+                max = height[i];
+            }
+            left[i] = max;
+        }
+        max = 0;
+        for (int i = len - 1; i >= 0; i--) {
+            if (height[i] > max) {
+                max = height[i];
+            }
+            right[i] = max;
+        }
+        int res = 0;
+        for (int i = 0; i < len; i++) {
+            res += Math.min(left[i], right[i]) - height[i];
+        }
+        return res;
+    }
+
+    public int firstMissingPositive(int[] nums) {
+        if (nums == null || nums.length == 0) return 1;
+        int len = nums.length;
+        // 让每个正数i在i - 1的位置上，即nums[i] = i + 1
+        for (int i = 0; i < len; i++) {
+            while (nums[i] > 0 && nums[i] <= len && nums[i] != nums[nums[i] - 1]) {
+                swap(nums, i, nums[i] - 1);
+            }
+        }
+        int i = 0;
+        for (; i < len; i++) {
+            if (nums[i] != i + 1) break;
+        }
+        return i + 1;
+    }
+
+    public void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+
+
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Set<List<Integer>> res = new HashSet<>();
+        List<Integer> tmp = new ArrayList<>();
+        Arrays.sort(candidates);
+        combinationHelp2(candidates, 0,0, target, tmp, res);
+        return new ArrayList<>(res);
+    }
+
+    private void combinationHelp2(int[] candidates, int index, int sum, int target, List<Integer> tmp, Set<List<Integer>> res) {
+        if (sum == target) {
+            List<Integer> t = new ArrayList<>(tmp);
+            res.add(t);
+            return;
+        }
+        for (int i = index; i < candidates.length; i++) {
+            if (sum + candidates[i] > target) break;
+            tmp.add(candidates[i]);
+            combinationHelp2(candidates, i + 1, sum + candidates[i], target, tmp, res);
+            tmp.remove(Integer.valueOf(candidates[i]));
+        }
+    }
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> tmp = new ArrayList<>();
+        Arrays.sort(candidates);
+        combinationHelp(candidates, 0,0, target, tmp, res);
+        return res;
+    }
+
+    private void combinationHelp(int[] candidates, int index, int sum, int target, List<Integer> tmp, List<List<Integer>> res) {
+        if (sum == target) {
+            List<Integer> t = new ArrayList<>(tmp);
+            res.add(t);
+            return;
+        }
+        for (int i = index; i < candidates.length; i++) {
+            if (sum + candidates[i] > target) break;
+            tmp.add(candidates[i]);
+            combinationHelp(candidates, i, sum + candidates[i], target, tmp, res);
+            tmp.remove(Integer.valueOf(candidates[i]));
+        }
+    }
+
+    public String countAndSay(int n) {
+        String s = "1";
+        while (n-- > 1) {
+            StringBuilder sb = new StringBuilder();
+            char ch = s.charAt(0);
+            int t = 1;
+            for (int i = 1; i < s.length(); i++) {
+                if (s.charAt(i) == ch) {
+                    t++;
+                } else {
+                    sb.append(t).append(ch);
+                    ch = s.charAt(i);
+                    t = 1;
+                }
+            }
+            sb.append(t).append(ch);
+            s = sb.toString();
+        }
+        return s;
     }
 
     public void nextPermutation(int[] nums) {

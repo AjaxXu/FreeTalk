@@ -9,26 +9,61 @@ public class ListSolution {
 
     @Test
     public void test() {
-        System.out.println(generateParenthesis(3).toString());
+        System.out.println(search(new int[]{1}, 1));
+    }
+
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] == target) return mid;
+            if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[]{-1, -1};
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] == target) {
+                int i = mid;
+                while (i >= 0 && nums[i--] == nums[mid]) res[0] = i + 1;
+                i = mid;
+                while (i < nums.length && nums[i++] == nums[mid]) res[1] = i - 1;
+                break;
+            }
+            if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return res;
     }
 
     public int search(int[] nums, int target) {
-        int len = nums.length - 1;
-        int start = 0, end = len;
-        while (start < end) {
-            int mid = (start + end) / 2;
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
             if (nums[mid] == target) return mid;
-            if (nums[mid] < target) {
-                if (target <= nums[len]) {
-                    start = mid;
+            // 左边升序
+            if (nums[left] <= nums[mid]) {
+                if (nums[left] <= target && target <= nums[mid]) { // 在左边
+                    right = mid - 1;
                 } else {
-                    end = mid;
+                    left = mid + 1;
                 }
-            } else {
-                if (nums[0] <= target) {
-                    end = mid;
+            } else { // 右边升序
+                if (nums[mid] <= target && target <= nums[right]) { // 在右边
+                    left = mid + 1;
                 } else {
-                    start = mid;
+                    right = mid - 1;
                 }
             }
         }
