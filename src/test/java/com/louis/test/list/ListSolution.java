@@ -12,6 +12,79 @@ public class ListSolution {
         System.out.println(search(new int[]{1}, 1));
     }
 
+    public int[][] generateMatrix(int n) {
+        int[][] res = new int[n][n];
+        int p1 = 0, q1 = 0;
+        int p2 = n - 1, q2 = n - 1;
+        int num = 1;
+        while (true) {
+            for (int i = q1; i <= q1; i++) {
+                res[p1][i] = num++;
+            }
+            if (++p1 > p2) break;
+            for (int i = p1; i <= p2; i++) {
+                res[i][q2] = num++;
+            }
+            if (--q2 < q1) break;;
+            for (int i = q2; i >= q1; i--) {
+                res[p2][i] = num++;
+            }
+            if (--p2 < p1) break;
+            for (int i = p2; i >= p1; i--) {
+                res[i][q1] = num++;
+            }
+            if (++q1 > q2) break;
+        }
+        return res;
+    }
+
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res = new ArrayList<>();
+        if (matrix.length == 0 || matrix[0].length == 0) return res;
+        int p1 = 0, q1 = 0;
+        int p2 = matrix.length - 1, q2 = matrix[0].length - 1;
+        while (true) {
+            for (int i = q1; i <= q2; i++) {
+                res.add(matrix[p1][i]);
+            }
+            if (++p1 > p2) break;
+            for (int i = p1; i <= p2; i++) {
+                res.add(matrix[i][q2]);
+            }
+            if (--q2 < q1) break;
+            for (int i = q2; i >= q1; i--) {
+                res.add(matrix[p2][i]);
+            }
+            if (--p2 < p1) break;
+            for (int i = p2; i >= p1; i--) {
+                res.add(matrix[i][q1]);
+            }
+            if (++q1 > q2) break;
+        }
+        return res;
+    }
+
+    public void rotate(int[][] matrix) {
+        // 先反对角线，后上下翻转
+        for (int i = 0; i < matrix.length - 1; i++) {
+            for (int j = 0; j < matrix[i].length - i - 1; j++) {
+                swap(matrix, i, j,  matrix[i].length - 1 - j, matrix.length - 1 - i);
+            }
+        }
+
+        for (int i = 0; i < matrix.length / 2; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                swap(matrix, i, j, matrix.length - 1 - i, j);
+            }
+        }
+    }
+
+    private void swap(int[][] matrix, int i, int j, int m, int n) {
+        int t = matrix[m][n];
+        matrix[m][n] = matrix[i][j];
+        matrix[i][j] = t;
+    }
+
     public int searchInsert(int[] nums, int target) {
         int left = 0, right = nums.length - 1;
         while (left <= right) {
