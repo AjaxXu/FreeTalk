@@ -1,24 +1,83 @@
 package com.louis.test.backtrack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Louis
  */
 public class BacktrackSolution {
-    public void solveSudoku(char[][] board) {
-        help(board, 0);
+
+    public int totalNQueens(int n) {
+        return solveNQueens(n).size();
     }
 
-    private boolean help(char[][] board, int n) {
+    List<List<String>> listListStr = new ArrayList<>();
+    public List<List<String>> solveNQueens(int n) {
+        char[][] pan = new char[n][n];
+        for (char[] p : pan) {
+            Arrays.fill(p, '.');
+        }
+        solveNQueens_(pan, 0, n);
+        return listListStr;
+    }
+
+    private void solveNQueens_(char[][] pan, int row, int n) {
+        if (row == n) {
+            listListStr.add(Arrays.stream(pan).map(String::valueOf).collect(Collectors.toList()));
+            return;
+        }
+        for (int i = 0; i < n; i++) {
+            pan[row][i] = 'Q';
+            if (isValidNQueens(pan, row, i, n)) {
+                solveNQueens_(pan, row + 1, n);
+            }
+            pan[row][i] = '.';
+        }
+    }
+
+    private boolean isValidNQueens(char[][] pan, int row, int col, int n) {
+        // 列
+        for (int i = 0; i < n; i++) {
+            if (i != row && pan[i][col] == 'Q') {
+                return false;
+            }
+        }
+        for (int i = 1; i < n; i++) {
+            // 正对角线
+            if (row - i >= 0 && col - i >= 0 && pan[row - i][col- i] == 'Q') {
+                return false;
+            }
+            if (row + i < n && col + i < n && pan[row + i][col + i] == 'Q') {
+                return false;
+            }
+            // 反对角线
+            if (row - i >= 0 && col + i < n && pan[row - i][col + i] == 'Q') {
+                return false;
+            }
+            if (row + i < n && col - i >= 0 && pan[row + i][col - i] == 'Q') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void solveSudoku(char[][] board) {
+        solveSudoku_(board, 0);
+    }
+
+
+    private boolean solveSudoku_(char[][] board, int n) {
         if (n >= 9 * 9) return true;
         int row = n / 9, col = n % 9;
         if (board[row][col] != '.') {
-            return help(board, n + 1);
+            return solveSudoku_(board, n + 1);
         }
         for (int i = 1; i <= 9; i++) {
             board[row][col] = (char) (i + '0');
-            if (isValidSudoku(board) && help(board, n + 1)) {
+            if (isValidSudoku(board) && solveSudoku_(board, n + 1)) {
                 return true;
             }
         }

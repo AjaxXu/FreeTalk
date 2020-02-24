@@ -12,6 +12,83 @@ public class NumericSolution {
         System.out.println(multiply("11", "10"));
     }
 
+    public String getPermutation(int n, int k) {
+        
+    }
+
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        List<int[]> res = new ArrayList<>();
+        int[] tmp = newInterval;
+        for(int[] interval : intervals) {
+            // interval在newInterval左边或右边
+            if (tmp == null || interval[1] < tmp[0]) {
+                res.add(interval);
+            } else if (tmp[1] < interval[0]) {
+                res.add(tmp);
+                tmp = null;
+                res.add(interval);
+            } else {
+                // 交界
+                tmp[0] = Math.min(tmp[0], interval[0]);
+                tmp[1] = Math.max(tmp[1], interval[1]);
+            }
+        }
+        if (tmp != null) {
+            res.add(tmp);
+        }
+        return res.toArray(new int[0][]);
+    }
+
+    public int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        List<int[]> res = new ArrayList<>();
+        int[] tmp = null;
+        for(int[] interval : intervals) {
+            if (tmp == null) {
+                tmp = interval;
+            } else if (tmp[1] < interval[0]) {
+                res.add(tmp);
+                tmp = interval;
+            } else {
+                tmp[0] = Math.min(tmp[0], interval[0]);
+                tmp[1] = Math.max(tmp[1], interval[1]);
+            }
+        }
+        if (tmp != null) {
+            res.add(tmp);
+        }
+        return res.toArray(new int[0][]);
+    }
+
+    public int maxSubArray(int[] nums) {
+        int max = Integer.MIN_VALUE;
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+            if (sum > max) max = sum;
+            if (sum < 0) sum = 0;
+        }
+        return max;
+    }
+
+    public double myPow(double x, int n) {
+        if (n < 0) {
+            return 1 / myPow_(x, -n);
+        } else {
+            return myPow_(x, n);
+        }
+    }
+
+    private double myPow_(double x, int n) {
+        if (n == 0) return 1;
+        double v = myPow_(x, n / 2);
+        if (x % 2 == 0) {
+            return v * v;
+        } else {
+            return x * v * v;
+        }
+    }
+
     public String multiply(String num1, String num2) {
         if (num1.equals("0") || num2.equals("0")) return "0";
         int[] res = new int[num1.length() + num2.length()];

@@ -11,7 +11,37 @@ public class StringSolution {
 
     @Test
     public void test() {
-        System.out.println(isMatch("cb", "?a"));
+        System.out.println(lengthOfLastWord(""));
+    }
+
+    public int lengthOfLastWord(String s) {
+        boolean sign = false;
+        int right = s.length() - 1;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            if (s.charAt(i) == ' ') {
+                if (sign) {
+                    return right - i;
+                }
+                right--;
+            } else {
+                if (!sign) {
+                    sign = true;
+                    right = i;
+                }
+            }
+        }
+        return right + 1;
+    }
+
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (String s: strs) {
+            char[] chars = s.toCharArray();
+            Arrays.sort(chars);
+            List<String> list = map.computeIfAbsent(new String(chars), (a) -> new ArrayList<>());
+            list.add(s);
+        }
+        return new ArrayList<>(map.values());
     }
 
     // 状态 dp[i][j] : 表示 s 的前 i 个字符和 p 的前 j 个字符是否匹配 (true 的话表示匹配)
