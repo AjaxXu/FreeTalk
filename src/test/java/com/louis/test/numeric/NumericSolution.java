@@ -13,7 +13,34 @@ public class NumericSolution {
     }
 
     public String getPermutation(int n, int k) {
-        
+        boolean[] visited = new boolean[n];
+        return getPermutation_(n, factorial(n - 1), k, visited);
+    }
+
+    /**
+     * @param n 剩余的数字个数，递减
+     * @param f 每组的排列个数
+     */
+    private String getPermutation_(int n, int f, int k, boolean[] visited) {
+        int off = k % f; //
+        int groupId = k / f + (off > 0 ? 1 : 0); // 第几组
+        // 在没被访问的数字里查找第groupId个
+        int i = 0;
+        for (; i < visited.length && groupId > 0; i++) {
+            if (!visited[i]) groupId--;
+        }
+        visited[i - 1] = true;
+        if (n > 1) {
+            // offset = 0 时，则取第 i 组的第 f 个排列 (全部降序)，否则取第 i 组的第 offset 个排列
+            return i + getPermutation_(n - 1, f / (n - 1), off == 0 ? f : off, visited);
+        }
+        // 最后一数字
+        return "" + i;
+    }
+
+    private int factorial(int n) {
+        if (n <= 1) return 1;
+        return n * factorial(n - 1);
     }
 
     public int[][] insert(int[][] intervals, int[] newInterval) {
