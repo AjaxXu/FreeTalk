@@ -12,6 +12,25 @@ public class ListSolution {
         System.out.println(search(new int[]{1}, 1));
     }
 
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null) return head;
+        int n = 0;
+        ListNode l = head;
+        while (l.next != null) {
+            n++;
+            l = l.next;
+        }
+        k = k % (n + 1);
+        k = n + 1 - k;
+        l.next = head;
+        while (k-- > 0) {
+            l = l.next;
+        }
+        head = l.next;
+        l.next = null;
+        return head;
+    }
+
     public int[][] generateMatrix(int n) {
         int[][] res = new int[n][n];
         int p1 = 0, q1 = 0;
