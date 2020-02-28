@@ -6,10 +6,146 @@ import org.junit.Test;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
+
 public class NumericSolution {
     @Test
     public void test1() {
-        System.out.println(multiply("11", "10"));
+        System.out.println(climbStairs(3));
+    }
+
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int m = matrix.length;
+        if (m == 0) return false;
+        int n = matrix[0].length;
+        int left = 0, right = m * n - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int element = matrix[mid / n][mid % n];
+            if (element == target) return true;
+            else {
+                if (element > target) right = mid - 1;
+                else left = mid + 1;
+            }
+        }
+        return false;
+    }
+
+    public void setZeroes(int[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return;
+        boolean firstColumnHasZero = false;
+        boolean firstRowHasZero = false;
+        for (int[] ints : matrix) {
+            if (ints[0] == 0) {
+                firstColumnHasZero = true;
+                break;
+            }
+        }
+
+        for (int i = 0; i < matrix[0].length; i++) {
+            if (matrix[0][i] == 0) {
+                firstRowHasZero = true;
+                break;
+            }
+        }
+
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[0][j] = 0;
+                    matrix[i][0] = 0;
+                }
+            }
+        }
+
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[0].length; j++) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (firstColumnHasZero) {
+            for (int[] ints : matrix) {
+                ints[0] = 0;
+            }
+        }
+        if (firstRowHasZero) {
+            Arrays.fill(matrix[0], 0);
+        }
+    }
+
+    public int climbStairs(int n) {
+        int s0 = 1;
+        int s1 = 1;
+        int s = 1;
+        while (n-- > 1) {
+            s = s0 + s1;
+            s0 = s1;
+            s1 = s;
+        }
+        return s;
+    }
+
+    public int mySqrt(int x) {
+        if (x < 2) return x;
+        int left = 2, right = x / 2;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            long num = (long)mid * mid;
+            if (num == x) return mid;
+            if (num > x) right = mid - 1;
+            else left = mid + 1;
+        }
+        return right;
+    }
+
+    public int[] plusOne(int[] digits) {
+        int carry = 1;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            carry = digits[i] + carry;
+            digits[i] = carry % 10;
+            carry = carry / 10;
+        }
+        if (carry == 0) return digits;
+        int[] res = new int[digits.length + 1];
+        res[0] = carry;
+        System.arraycopy(digits, 0, res, 1, digits.length);
+        return res;
+    }
+
+    public boolean isNumber(String s) {
+        s = s.trim();
+        boolean hasE = false;
+        boolean hasPoint = false;
+        boolean hasNumber = false;
+        boolean numberAfterE = false;
+        for (int i = 0; i < s.length(); i++) {
+            if (isNumber(s.charAt(i))) {
+                hasNumber = true;
+                numberAfterE = true;
+            } else if (s.charAt(i) == '.') {
+                if (hasE || hasPoint) return false;
+                hasPoint = true;
+            } else if (s.charAt(i) == 'e') {
+                if (hasE || !hasNumber) {
+                    return false;
+                }
+                hasE = true;
+                numberAfterE = false;
+            } else if (s.charAt(i) == '-' || s.charAt(i) == '+') {
+                if (i != 0 && s.charAt(i - 1) != 'e') {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return hasNumber && numberAfterE;
+    }
+
+    private boolean isNumber(char c) {
+        return c >= '0' && c <= '9';
     }
 
     public String getPermutation(int n, int k) {

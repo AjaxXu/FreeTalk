@@ -12,6 +12,59 @@ public class ListSolution {
         System.out.println(search(new int[]{1}, 1));
     }
 
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        int left = 0;
+        List<String> res = new ArrayList<>();
+        while (left < words.length) {
+            int right = findRight(left, words, maxWidth);
+            res.add(justify(left, right, words, maxWidth));
+            left = right + 1;
+        }
+        return res;
+    }
+
+    private String justify(int left, int right, String[] words, int maxWidth) {
+        if (right - left == 0) return padResult(words[left], maxWidth);
+
+        boolean isLastLine = right == words.length - 1;
+        int numSpace = right - left;
+        int totalSpace = maxWidth - wordsLength(left, right, words);
+
+        String space = isLastLine ? " " : blankResult(totalSpace / numSpace);
+        int remain = isLastLine ? 0 : totalSpace % numSpace;
+        StringBuilder sb = new StringBuilder();
+        for (int i = left; i <= right; i++) {
+            sb.append(words[i]).append(space)
+                    .append(remain-- > 0 ? " " : "");
+        }
+        return padResult(sb.toString().trim(), maxWidth);
+    }
+
+    private int wordsLength(int left, int right, String[] words) {
+        int sum = 0;
+        for (int i = left; i <= right; i++) {
+            sum += words[i].length();
+        }
+        return sum;
+    }
+
+    private String padResult(String word, int maxWidth) {
+        return word + blankResult(maxWidth - word.length());
+    }
+
+    private String blankResult(int length) {
+        return new String(new char[length]).replace('\0', ' ');
+    }
+
+    private int findRight(int left, String[] words, int maxWidth) {
+        int right = left;
+        int sum = words[right++].length();
+        while (right < words.length && sum + 1 + words[right].length() <= maxWidth) {
+            sum += 1 + words[right++].length();
+        }
+        return right - 1;
+    }
+
     public ListNode rotateRight(ListNode head, int k) {
         if (head == null) return head;
         int n = 0;
