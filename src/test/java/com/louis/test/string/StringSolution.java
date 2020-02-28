@@ -14,6 +14,50 @@ public class StringSolution {
         System.out.println(lengthOfLastWord(""));
     }
 
+    public String simplifyPath(String path) {
+        String[] splits = path.split("/");
+        Stack<String> stack = new Stack<>();
+        for (int i = 0; i < splits.length; i++) {
+            if (splits[i].isEmpty() || splits[i].equals(".")) continue;
+            if (splits[i].equals("..")) {
+                if (!stack.isEmpty()) stack.pop();
+            } else {
+                stack.push(splits[i]);
+            }
+        }
+        if (stack.isEmpty()) return "/";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < stack.size(); i++) {
+            sb.append("/").append(stack.elementAt(i));
+        }
+        return sb.toString();
+    }
+
+    public String addBinary(String a, String b) {
+        int aL = a.length() - 1, bL = b.length() -1;
+        StringBuilder sb = new StringBuilder();
+        int carry = 0;
+        while (aL >= 0 && bL >= 0) {
+             carry = a.charAt(aL--) - '0' + b.charAt(bL--) - '0' + carry;
+             sb.insert(0, carry % 2);
+             carry = carry / 2;
+        }
+        while (aL >= 0) {
+            carry = a.charAt(aL--) - '0' + carry;
+            sb.insert(0, carry % 2);
+            carry = carry / 2;
+        }
+        while (bL >= 0) {
+            carry = b.charAt(bL--) - '0' + carry;
+            sb.insert(0, carry % 2);
+            carry = carry / 2;
+        }
+        if (carry > 0) {
+            sb.insert(0, carry);
+        }
+        return sb.toString();
+    }
+
     public int lengthOfLastWord(String s) {
         boolean sign = false;
         int right = s.length() - 1;
