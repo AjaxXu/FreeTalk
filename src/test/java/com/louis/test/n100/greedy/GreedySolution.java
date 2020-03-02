@@ -1,6 +1,5 @@
-package com.louis.test.greedy;
+package com.louis.test.n100.greedy;
 
-import com.sun.org.apache.bcel.internal.generic.SWAP;
 import org.junit.Test;
 
 import java.util.ArrayList;
