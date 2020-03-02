@@ -1,9 +1,7 @@
-package com.louis.test.numeric;
+package com.louis.test.n100.numeric;
 
-import com.louis.test.base.ListNode;
 import org.junit.Test;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +9,113 @@ import static org.junit.Assert.assertEquals;
 public class NumericSolution {
     @Test
     public void test1() {
-        System.out.println(climbStairs(3));
+        System.out.println(grayCode_89(2));
+    }
+
+    public List<Integer> grayCode_89(int n) {
+        List<Integer> list = new ArrayList<>();
+        list.add(0);
+        if (n <= 0) return list;
+        int i = 0;
+        while (i < n) {
+            int b = 1 << i++;
+            for (int k = list.size() - 1; k >= 0; k--) {
+                list.add(b | list.get(k));
+            }
+        }
+        return list;
+    }
+
+    public void merge_88(int[] nums1, int m, int[] nums2, int n) {
+        int len = m + n;
+        while (m > 0 && n > 0) {
+            if (nums1[m - 1] >= nums2[n - 1]) {
+                nums1[--len] = nums1[--m];
+            } else {
+                nums1[--len] = nums2[--n];
+            }
+        }
+        while (m > 0) {
+            nums1[--len] = nums1[--m];
+        }
+        while (n > 0) {
+            nums1[--len] = nums2[--n];
+        }
+    }
+
+    public boolean search(int[] nums, int target) {
+        int left = 0, right = nums.length -1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int v = nums[mid];
+            if (v == target) return true;
+            if (nums[left] < v) {
+                if (nums[left] <= target && target < v) {
+                    right = mid -1;
+                } else {
+                    left = mid + 1;
+                }
+            } else if (nums[left] > v) {
+                if (v < target && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            } else {
+                left = mid + 1;
+            }
+        }
+        return false;
+    }
+
+    public int removeDuplicates_1(int[] nums) {
+        int index = -1;
+        boolean hasTwo = false;
+        for (int i = 0; i < nums.length; i++) {
+            if (i == 0 || nums[index] != nums[i]) {
+                hasTwo = false;
+                nums[++index] = nums[i];
+            } else if (nums[index] == nums[i]) {
+                if (!hasTwo) {
+                    nums[++index] = nums[i];
+                    hasTwo = true;
+                }
+            }
+        }
+        return index + 1;
+    }
+
+    public List<List<Integer>> subsets_78(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<>());
+        for (int i = 0; i < nums.length; i++) {
+            List<List<Integer>> tmp = new ArrayList<>(res);
+            for(List<Integer> list : res) {
+                ArrayList<Integer> list1 = new ArrayList<>(list);
+                list1.add(nums[i]);
+                tmp.add(list1);
+            }
+            res = tmp;
+        }
+        return res;
+    }
+
+    public void sortColors(int[] nums) {
+        int p = -1;
+        int q = nums.length - 1;
+        int k = p + 1;
+        while (k < q) {
+            switch (nums[k]) {
+                case 0:
+                    swap(nums, ++p, k++);
+                    break;
+                case 1:
+                    k++;
+                    break;
+                case 2:
+                    swap(nums, k, q--);
+            }
+        }
     }
 
     public boolean searchMatrix(int[][] matrix, int target) {

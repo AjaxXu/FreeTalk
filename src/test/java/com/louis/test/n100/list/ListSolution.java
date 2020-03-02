@@ -1,4 +1,4 @@
-package com.louis.test.list;
+package com.louis.test.n100.list;
 
 import com.louis.test.base.ListNode;
 import org.junit.Test;
@@ -10,6 +10,83 @@ public class ListSolution {
     @Test
     public void test() {
         System.out.println(search(new int[]{1}, 1));
+    }
+
+    public ListNode reverseBetween_92(ListNode head, int m, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        for (int i = 1; i < m && head != null; i++) {
+            head = head.next;
+            prev = prev.next;
+        }
+        if (head == null) return dummy.next;
+        ListNode curTail = head;
+        for (int i = m; i <= n && head != null; i++) {
+            ListNode tmp = head.next;
+            head.next = prev.next;
+            prev.next = head;
+            head = tmp;
+        }
+        curTail.next = head;
+        return dummy.next;
+    }
+
+    public ListNode partition_86(ListNode head, int x) {
+        ListNode ge = new ListNode(-1);
+        ListNode lt = new ListNode(-1);
+        ListNode p = ge;
+        ListNode q = lt;
+        while (head != null) {
+            if (head.val < x) {
+                q.next = head;
+                q = q.next;
+            } else {
+                p.next = head;
+                p = p.next;
+            }
+            head = head.next;
+        }
+        q.next = ge.next;
+        p.next = null;
+        return lt.next;
+    }
+
+    public ListNode deleteDuplicates_83(ListNode head) {
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        while (head != null) {
+            if (head.next != null && head.val == head.next.val) {
+                ListNode p = head.next;
+                while (p != null && p.val == head.val) {
+                    p = p.next;
+                }
+                head.next = p;
+            }
+            head = head.next;
+        }
+        return dummy.next;
+    }
+
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        int v = -1;
+        ListNode prev = dummy;
+        while (head != null) {
+            if (head.next != null && head.val == head.next.val) {
+                v = head.val;
+                head = head.next;
+                while (head != null && head.val == v) {
+                    head = head.next;
+                }
+                prev.next = head;
+            } else {
+                head = head.next;
+                prev = prev.next;
+            }
+        }
+        return dummy.next;
     }
 
     public List<String> fullJustify(String[] words, int maxWidth) {

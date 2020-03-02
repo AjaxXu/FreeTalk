@@ -1,6 +1,5 @@
-package com.louis.test.string;
+package com.louis.test.n100.string;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
@@ -12,6 +11,51 @@ public class StringSolution {
     @Test
     public void test() {
         System.out.println(lengthOfLastWord(""));
+    }
+
+    public String minWindow(String s, String t) {
+        Map<Character, Integer> target = new HashMap<>();
+        Map<Character, Integer> found = new HashMap<>();
+        int minWindowStart = -1;
+        int minWindowLen = Integer.MAX_VALUE;
+        for (char c : t.toCharArray()) {
+            Integer count = target.getOrDefault(c, 0);
+            target.put(c, count + 1);
+        }
+        int start = 0;
+        int foundNumber = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (!target.containsKey(c)) continue;
+            Integer k = found.getOrDefault(c, 0) + 1;
+            found.put(c, k);
+            if (k <= target.get(c)) {
+                foundNumber++;
+            }
+
+            if (foundNumber == t.length()) {
+                char beginC = s.charAt(start);
+                // 不包含beginC，或者beginC的数量大于t中的数量
+                while (!found.containsKey(beginC) || found.get(beginC) > target.get(beginC)) {
+                    if (found.containsKey(beginC)) {
+                        found.put(beginC, found.get(beginC) - 1);
+                    }
+                    start++;
+                    beginC = s.charAt(start);
+                }
+                int len = i - start + 1;
+                if (len < minWindowLen) {
+                    minWindowStart = start;
+                    minWindowLen = len;
+                }
+            }
+        }
+
+        if (minWindowStart != -1) {
+            return s.substring(minWindowStart, minWindowStart + minWindowLen);
+        }
+        return "";
     }
 
     public String simplifyPath(String path) {
