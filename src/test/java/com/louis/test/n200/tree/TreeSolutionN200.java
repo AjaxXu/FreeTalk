@@ -2,11 +2,168 @@ package com.louis.test.n200.tree;
 
 import com.louis.test.base.ListNode;
 import com.louis.test.base.TreeNode;
+import com.louis.test.base.Node;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TreeSolutionN200 {
+
+    @Test
+    public void test() {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        flatten_114(root);
+
+    }
+
+    // https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/
+    int maxPathSum = Integer.MIN_VALUE;
+    public int maxPathSum_124(TreeNode root) {
+        maxPathSum_124_1(root);
+        return maxPathSum;
+    }
+
+    private int maxPathSum_124_1(TreeNode root) {
+        if (root == null)
+            return 0;
+        int leftSum = Math.max(maxPathSum_124_1(root.left), 0);
+        int rightSum = Math.max(maxPathSum_124_1(root.right), 0);
+        maxPathSum = Math.max(leftSum + rightSum + root.val, maxPathSum);
+        return Math.max(leftSum, rightSum) + root.val;
+    }
+
+    // https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii/
+    Node prev117, leftmost117;
+    public Node connect_117(Node root) {
+        if (root == null) return root;
+
+        leftmost117 = root;
+        while (leftmost117 != null) {
+            this.prev117 = null;
+            Node cur = leftmost117;
+            leftmost117 = null;
+            while (cur != null) {
+                connect_117_1(cur.left);
+                connect_117_1(cur.right);
+                cur = cur.next;
+            }
+        }
+        return root;
+    }
+
+    private void connect_117_1(Node node) {
+        if (node != null) {
+            if (prev117 != null) {
+                prev117.next = node;
+            } else {
+                leftmost117 = node;
+            }
+            prev117 = node;
+        }
+    }
+
+    // https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/
+    public Node connect_116(Node root) {
+        if (root == null) return root;
+        List<Node> record = new ArrayList<>();
+        record.add(root);
+        while (!record.isEmpty()) {
+            List<Node> tmp = new ArrayList<>();
+
+            for (int i = 0; i < record.size(); i++) {
+                Node node = record.get(i);
+
+                node.next = i + 1 == record.size() ? null : record.get(i + 1);
+                if (node.left != null) {
+                    tmp.add(node.left);
+                }
+                if (node.right != null) {
+                    tmp.add(node.right);
+                }
+            }
+            record = tmp;
+        }
+        return root;
+    }
+
+    // https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/
+    public void flatten_114(TreeNode root) {
+        flatten_114_1(root);
+    }
+
+    private TreeNode flatten_114_1(TreeNode root) {
+        if (root == null) return null;
+        TreeNode ltail = flatten_114_1(root.left);
+        TreeNode rtail = flatten_114_1(root.right);
+        if (root.left != null) {
+            ltail.right = root.right;
+            root.right = root.left;
+            root.left = null;
+        }
+        if (rtail != null) return rtail;
+        if (ltail != null) return ltail;
+        return root;
+    }
+
+    // https://leetcode-cn.com/problems/path-sum-ii/
+    public List<List<Integer>> pathSum_113(TreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> data = new ArrayList<>();
+        pathSum_113_1(res, data, root, sum);
+        return res;
+    }
+
+    private void pathSum_113_1(List<List<Integer>> res, List<Integer> data, TreeNode root, int sum) {
+        if (root == null) return;
+        if (root.left == null && root.right == null && root.val == sum) {
+            List<Integer> t = new ArrayList<>(data);
+            t.add(root.val);
+            res.add(t);
+            return;
+        }
+        data.add(root.val);
+        if (root.left != null) {
+            pathSum_113_1(res, data, root.left, sum - root.val);
+        }
+        if (root.right != null) {
+            pathSum_113_1(res, data, root.right, sum - root.val);
+        }
+        data.remove(data.size() - 1);
+    }
+
+    // https://leetcode-cn.com/problems/path-sum/
+    public boolean hasPathSum_112(TreeNode root, int sum) {
+        if (root == null) return false;
+        return hasPathSum_112_1(root, sum);
+    }
+
+    private boolean hasPathSum_112_1(TreeNode root, int left) {
+        if (root == null && left == 0) return true;
+        if (root == null) return false;
+        if (root.left == null) return hasPathSum_112_1(root.right, left - root.val);
+        if (root.right == null) return hasPathSum_112_1(root.left, left - root.val);
+        return hasPathSum_112_1(root.left, left - root.val) || hasPathSum_112_1(root.right, left - root.val);
+    }
+
+    // https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/
+    public int minDepth_111(TreeNode root) {
+        return minDepth_111_1(root);
+    }
+
+    private int minDepth_111_1(TreeNode root) {
+        if (root == null) return 0;
+        if (root.right == null) {
+            return 1 + minDepth_111_1(root.left);
+        }
+        if (root.left == null) {
+            return 1 + minDepth_111_1(root.right);
+        }
+        int l = minDepth_111_1(root.left);
+        int r = minDepth_111_1(root.right);
+        return 1 + Math.min(l, r);
+    }
 
     // https://leetcode-cn.com/problems/balanced-binary-tree/submissions/
     public boolean isBalanced_110(TreeNode root) {
