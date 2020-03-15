@@ -2,9 +2,7 @@ package com.louis.test.n200.list;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ListSolutionN200 {
 
@@ -12,6 +10,122 @@ public class ListSolutionN200 {
     public void test1() {
         System.out.println(getRow_119(4).toString());
     }
+
+    // https://leetcode-cn.com/problems/word-ladder/
+    public int ladderLength_127(String beginWord, String endWord, List<String> wordList) {
+        if (!wordList.contains(endWord)) {
+            return 0;
+        }
+        Queue<String> queue = new LinkedList<>();
+        Set<String> dict = new HashSet<>(wordList);
+        queue.add(beginWord);
+        int len = 0;
+        while (!queue.isEmpty()) {
+            len++;
+            int size = queue.size();
+            Set<String> tempSet = new HashSet<>();
+            for (int i = 0; i < size; i++) {
+                String s = queue.poll();
+                if (s.equals(endWord)) return len;
+                tempSet.addAll(getNeighbors_127(s, dict));
+            }
+            queue.addAll(tempSet);
+        }
+        return 0;
+    }
+
+    private List<String> getNeighbors_127(String node, Set<String> dict) {
+        List<String> res = new ArrayList<>();
+        char[] chs = node.toCharArray();
+        for (char ch = 'a'; ch <= 'z'; ch++) {
+            for (int i = 0; i < chs.length; i++) {
+                if (chs[i] == ch)
+                    continue;
+                char old_ch = chs[i];
+                chs[i] = ch;
+                if (dict.contains(String.valueOf(chs))) {
+                    res.add(String.valueOf(chs));
+                }
+                chs[i] = old_ch;
+            }
+
+        }
+        return res;
+    }
+
+    // https://leetcode-cn.com/problems/word-ladder-ii/
+    public List<List<String>> findLadders_126(String beginWord, String endWord, List<String> wordList) {
+        List<List<String>> ans = new ArrayList<>();
+        if (!wordList.contains(endWord)) {
+            return ans;
+        }
+        bfs_126(beginWord, endWord, wordList, ans);
+        return ans;
+    }
+
+    private void bfs_126(String beginWord, String endWord, List<String> wordList, List<List<String>> ans) {
+        Queue<List<String>> queue = new LinkedList<>();
+        List<String> path = new ArrayList<>();
+        path.add(beginWord);
+        // 队列中加入当前路径
+        queue.offer(path);
+        boolean isFound = false;
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+        Set<String> dict = new HashSet<>(wordList);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            Set<String> subVisited = new HashSet<>();
+            for (int i = 0; i < size; i++) {
+                List<String> p = queue.poll();
+                // 取出路径中的最后一个单词
+                String temp = p.get(p.size() - 1);
+                // 一次性得到所有的下一个的节点
+                List<String> neighbors =  getNeighbors_126(temp, dict);
+                for (String neighbor: neighbors) {
+                    //只考虑之前没有出现过的单词
+                    if (!visited.contains(neighbor)) {
+                        // 到达结束单词
+                        if (neighbor.equals(endWord)) {
+                            isFound = true;
+                            p.add(neighbor);
+                            ans.add(new ArrayList<>(p));
+                            p.remove(p.size() - 1);
+                        }
+                        // 加入当前单词
+                        p.add(neighbor);
+                        queue.offer(new ArrayList<>(p));
+                        p.remove(p.size() - 1);
+                        subVisited.add(neighbor);
+                    }
+                }
+            }
+            visited.addAll(subVisited);
+            if (isFound) {
+                break;
+            }
+        }
+    }
+
+    private List<String> getNeighbors_126(String node, Set<String> dict) {
+        List<String> res = new ArrayList<String>();
+        char[] chs = node.toCharArray();
+        for (char ch = 'a'; ch <= 'z'; ch++) {
+            for (int i = 0; i < chs.length; i++) {
+                if (chs[i] == ch)
+                    continue;
+                char old_ch = chs[i];
+                chs[i] = ch;
+                if (dict.contains(String.valueOf(chs))) {
+                    res.add(String.valueOf(chs));
+                }
+                chs[i] = old_ch;
+            }
+
+        }
+        return res;
+    }
+
 
     // https://leetcode-cn.com/problems/triangle/
     public int minimumTotal_120(List<List<Integer>> triangle) {

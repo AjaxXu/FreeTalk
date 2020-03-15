@@ -18,6 +18,20 @@ public class TreeSolutionN200 {
 
     }
 
+    // https://leetcode-cn.com/problems/sum-root-to-leaf-numbers/
+    public int sumNumbers_129(TreeNode root) {
+        return sumNumbers_129_1(root, 0);
+    }
+
+    private int sumNumbers_129_1(TreeNode root, int p) {
+        if (root == null) return p;
+        int n = p * 10 + root.val;
+        if (root.left == null && root.right == null) return n;
+        if (root.left == null) return sumNumbers_129_1(root.right, n);
+        if (root.right == null) return sumNumbers_129_1(root.left, n);
+        return sumNumbers_129_1(root.left, n) + sumNumbers_129_1(root.right, n);
+    }
+
     // https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/
     int maxPathSum = Integer.MIN_VALUE;
     public int maxPathSum_124(TreeNode root) {
