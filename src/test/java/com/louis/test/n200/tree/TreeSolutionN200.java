@@ -5,17 +5,142 @@ import com.louis.test.base.TreeNode;
 import com.louis.test.base.Node;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TreeSolutionN200 {
 
     @Test
     public void test() {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        flatten_114(root);
+        LRUCache cache = new LRUCache(2);
+        cache.put(1, 1);
+        cache.put(2, 2);
+        cache.get(1);       // 返回  1
+        cache.put(3, 3);    // 该操作会使得密钥 2 作废
+        cache.get(2);       // 返回 -1 (未找到)
+        cache.put(4, 4);    // 该操作会使得密钥 1 作废
+        cache.get(1);       // 返回 -1 (未找到)
+        cache.get(3);       // 返回  3
+        cache.get(4);       // 返回  4
 
+    }
+
+    // 146: https://leetcode-cn.com/problems/lru-cache/
+    class LRUCache {
+        class Node {
+            int key;
+            int val;
+            Node prev, next;
+
+            public Node() {}
+
+            public Node(int key, int val) {
+                this.key = key;
+                this.val = val;
+            }
+        }
+        private int mSize;
+        private int mCapacity;
+        private Node start;
+        private Node end;
+        Map<Integer, Node> map;
+        public LRUCache(int capacity) {
+            mSize = 0;
+            mCapacity = capacity;
+            start = new Node();
+            end = new Node();
+            start.next = end;
+            map = new HashMap<>();
+        }
+
+        public int get(int key) {
+            if (map.containsKey(key)) {
+                Node node = map.get(key);
+                moveToHead(node);
+                return node.val;
+            } else {
+                return -1;
+            }
+        }
+
+        private void moveToHead(Node node) {
+            if (node.prev == start) return;
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+            insertToStart(node);
+        }
+
+        private void insertToStart(Node node) {
+            Node next = start.next;
+            node.next = next;
+            next.prev = node;
+            start.next = node;
+            node.prev = start;
+        }
+
+        public void put(int key, int value) {
+            if (map.containsKey(key)) {
+                moveToHead(map.get(key));
+                map.get(key).val = value;
+            } else {
+                Node node = new Node(key, value);
+                if (mSize >= mCapacity) {
+                    clearCache();
+                }
+                insertToStart(node);
+                mSize++;
+                map.put(key, node);
+            }
+        }
+
+        private void clearCache() {
+            while (mSize >= mCapacity) {
+                Node tail = end.prev;
+                if (tail == start) break;
+                tail.prev.next = end;
+                end.prev = tail.prev;
+                map.remove(tail.key);
+                mSize--;
+            }
+        }
+    }
+
+    // https://leetcode-cn.com/problems/binary-tree-postorder-traversal/
+    public List<Integer> postorderTraversal_145(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            res.add(node.val);
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
+        Collections.reverse(res);
+        return res;
+    }
+
+    // https://leetcode-cn.com/problems/binary-tree-preorder-traversal/
+    public List<Integer> preorderTraversal_144(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            res.add(node.val);
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        return res;
     }
 
     // https://leetcode-cn.com/problems/sum-root-to-leaf-numbers/
