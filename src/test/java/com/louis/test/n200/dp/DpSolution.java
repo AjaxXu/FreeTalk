@@ -2,11 +2,33 @@ package com.louis.test.n200.dp;
 
 import org.junit.Test;
 
+import java.util.Map;
+
 public class DpSolution {
 
     @Test
     public void test() {
         System.out.println(numDistinct_115("babgbag", "bag"));
+    }
+
+
+    // https://leetcode-cn.com/problems/maximum-product-subarray/
+    public int maxProduct_152(int[] nums) {
+        int len = nums.length;
+        int max = Integer.MIN_VALUE;
+        int imax = 1, imin = 1;
+        for (int i = 0; i < len; i++) {
+            if (nums[i] < 0) {
+                int t = imax;
+                imax = imin;
+                imin = t;
+            }
+            imax = Math.max(imax * nums[i], nums[i]);
+            imin = Math.min(imin * nums[i], nums[i]);
+
+            max = Math.max(max, imax);
+        }
+        return max;
     }
 
     // https://leetcode-cn.com/problems/distinct-subsequences/

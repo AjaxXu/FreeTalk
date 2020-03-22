@@ -1,5 +1,6 @@
 package com.louis.test.n200.list;
 
+import com.louis.test.base.ListNode;
 import org.junit.Test;
 
 import java.util.*;
@@ -8,7 +9,192 @@ public class ListSolutionN200 {
 
     @Test
     public void test1() {
-        System.out.println(getRow_119(4).toString());
+        ListNode n1 = new ListNode(2);
+        ListNode n2 = new ListNode(1);
+        ListNode n3 = new ListNode(3);
+        n1.next = n2;
+        n2.next = n3;
+        n1 = sortList_148(n1);
+        while (n1 != null) {
+            System.out.println(n1.val);
+            n1 = n1.next;
+        }
+    }
+
+    // https://leetcode-cn.com/problems/sort-list/
+    public ListNode sortList_148(ListNode head) {
+        if (head == null) return null;
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode slow = dummy;
+        ListNode fast = dummy.next;
+        while (fast != null) {
+            slow = slow.next;
+            fast = fast.next;
+            if (fast != null) fast = fast.next;
+        }
+        ListNode l2 = slow.next;
+        if (l2 == null) return head;
+        slow.next = null;
+        ListNode l1 = sortList_148(head);
+        l2 = sortList_148(l2);
+        ListNode l3 = dummy;
+        while (l1 != null || l2 != null) {
+            if (l1 != null && l2 != null) {
+                if (l1.val <= l2.val) {
+                    l3.next = l1;
+                    l1 = l1.next;
+                } else {
+                    l3.next = l2;
+                    l2 = l2.next;
+                }
+            } else if (l1 != null) {
+                l3.next = l1;
+                l1 = l1.next;
+            } else {
+                l3.next = l2;
+                l2 = l2.next;
+            }
+            l3 = l3.next;
+        }
+        return dummy.next;
+    }
+
+    // https://leetcode-cn.com/problems/insertion-sort-list/
+    public ListNode insertionSortList_147(ListNode head) {
+        ListNode dummy = new ListNode(Integer.MIN_VALUE);
+        dummy.next = head;
+        ListNode prev;
+        while (head != null && head.next != null) {
+            if (head.val > head.next.val) {
+                ListNode temp = head.next;
+                head.next = head.next.next;
+                prev = dummy;
+                while (prev.next.val < temp.val) {
+                    prev = prev.next;
+                }
+                temp.next = prev.next;
+                prev.next = temp;
+            } else {
+                head = head.next;
+            }
+        }
+        return dummy.next;
+    }
+
+    // https://leetcode-cn.com/problems/reorder-list/
+    public void reorderList_143(ListNode head) {
+        if (head == null) return;
+        ListNode p = head;
+        ListNode q = head.next;
+        while (q != null) {
+            p = p.next;
+            q = q.next;
+            if (q != null) {
+                q = q.next;
+            }
+        }
+
+        q = p.next;
+        p.next = null;
+
+        ListNode l2 = null;
+        while (q != null) {
+            ListNode t = q.next;
+            q.next = l2;
+            l2 = q;
+            q = t;
+        }
+        ListNode tail = new ListNode(-1);
+        while (head != null || l2 != null) {
+            if (head != null) {
+                tail.next = head;
+                head = head.next;
+                tail = tail.next;
+            }
+            if (l2 != null) {
+                tail.next = l2;
+                l2 = l2.next;
+                tail = tail.next;
+            }
+        }
+    }
+
+    // https://leetcode-cn.com/problems/linked-list-cycle-ii/
+    public ListNode detectCycle_142(ListNode head) {
+        ListNode one = head;
+        ListNode two = head;
+        while (two != null) {
+            if (two.next == null) {
+                return null;
+            }
+            one = one.next;
+            two = two.next.next;
+            if (one == two) {
+                two = head;
+                while (one != two) {
+                    one = one.next;
+                    two = two.next;
+                }
+                return one;
+            }
+        }
+        return null;
+    }
+
+    // https://leetcode-cn.com/problems/linked-list-cycle/
+    public boolean hasCycle_141(ListNode head) {
+        ListNode one = head;
+        ListNode two = head;
+        while (two != null) {
+            if (two.next == null) {
+                return false;
+            }
+            one = one.next;
+            two = two.next.next;
+            if (one == two) return true;
+        }
+        return false;
+    }
+
+    // https://leetcode-cn.com/problems/copy-list-with-random-pointer/
+    public Node copyRandomList_138(Node head) {
+        Map<Node, Node> origin2Copy = new HashMap<>();
+        Node tmp = head;
+        Node start = null;
+        Node prev = null;
+        while (tmp != null) {
+            Node copy = new Node(tmp.val);
+            if (start == null) {
+                start = copy;
+            }
+            if (prev != null) {
+                prev.next = copy;
+            }
+            prev = copy;
+            origin2Copy.put(tmp, copy);
+            tmp = tmp.next;
+        }
+
+        while (head != null) {
+            if (head.random != null) {
+                origin2Copy.get(head).random = origin2Copy.get(head.random);
+            }
+            head = head.next;
+        }
+        return start;
+    }
+
+    class Node {
+        int val;
+        Node next;
+        Node random;
+
+        public Node(int val) {
+            this.val = val;
+            this.next = null;
+            this.random = null;
+        }
     }
 
     // https://leetcode-cn.com/problems/word-ladder/

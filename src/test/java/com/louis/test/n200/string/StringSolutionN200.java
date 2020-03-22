@@ -2,16 +2,127 @@ package com.louis.test.n200.string;
 
 import org.junit.Test;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public class StringSolutionN200 {
 
     @Test
     public void test1() {
-        System.out.println(isPalindrome_125("A man, a plan, a canal: Panama"));
+        System.out.println(reverseWords_151("  hello world!  "));
+    }
+
+
+    // https://leetcode-cn.com/problems/reverse-words-in-a-string/
+    public String reverseWords_151(String s) {
+        String[] array = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (int i = array.length - 1; i >= 0; i--) {
+            String trim = array[i].trim();
+            if (!trim.isEmpty()) {
+                sb.append(trim).append(" ");
+            }
+        }
+        if (sb.length() > 0)
+            sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    // https://leetcode-cn.com/problems/evaluate-reverse-polish-notation/
+    public int evalRPN_150(String[] tokens) {
+        Stack<Integer> stack = new Stack<>();
+        int n1, n2;
+        for (String token : tokens) {
+            switch (token) {
+                case "+":
+                    n1 = stack.pop();
+                    n2 = stack.pop();
+                    stack.push(n1 + n2);
+                    break;
+                case "-":
+                    n2 = stack.pop();
+                    n1 = stack.pop();
+                    stack.push(n1 - n2);
+                    break;
+                case "*":
+                    n1 = stack.pop();
+                    n2 = stack.pop();
+                    stack.push(n1 * n2);
+                    break;
+                case "/":
+                    n2 = stack.pop();
+                    n1 = stack.pop();
+                    stack.push(n1 / n2);
+                    break;
+                default:
+                    stack.push(Integer.valueOf(token));
+                    break;
+            }
+        }
+        return stack.pop();
+    }
+
+    // https://leetcode-cn.com/problems/word-break-ii/
+    public List<String> wordBreak_140(String s, List<String> wordDict) {
+        Set<String> set = new HashSet<>(wordDict);
+        int len = s.length();
+        boolean[] dp = new boolean[len];
+        for (int r = 0; r < len; r++) {
+            if (set.contains(s.substring(0, r + 1))) {
+                dp[r] = true;
+            } else {
+                for (int l = 0; l < r; l++) {
+                    if (dp[l] && set.contains(s.substring(l + 1, r + 1))) {
+                        dp[r] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        List<String> res = new ArrayList<>();
+        if (dp[len - 1]) {
+            LinkedList<String> queue = new LinkedList<>();
+            dfs_140(s, len - 1, set, res, queue, dp);
+        }
+        return res;
+    }
+
+    private void dfs_140(String s, int end, Set<String> set, List<String> res, LinkedList<String> queue, boolean[] dp) {
+        String prefix = s.substring(0, end + 1);
+        if (set.contains(prefix)) {
+            queue.addFirst(prefix);
+            StringBuilder sb = new StringBuilder();
+            for (String word : queue) {
+                sb.append(word).append(" ");
+            }
+            res.add(sb.substring(0, sb.length() - 1));
+            queue.removeFirst();
+        }
+        for (int i = 0; i < end; i++) {
+            if (dp[i]) {
+                String suffix = s.substring(i + 1, end + 1);
+                if (set.contains(suffix)) {
+                    queue.addFirst(suffix);
+                    dfs_140(s, i, set, res, queue, dp);
+                    queue.removeFirst();
+                }
+            }
+        }
+    }
+
+    // https://leetcode-cn.com/problems/word-break/
+    public boolean wordBreak_139(String s, List<String> wordDict) {
+        Set<String> set = new HashSet<>(wordDict);
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                if (dp[j] && set.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp[s.length()];
     }
 
     // https://leetcode-cn.com/problems/palindrome-partitioning-ii/
